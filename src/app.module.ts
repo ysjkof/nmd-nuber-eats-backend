@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as Joi from 'joi';
+import { Restaurant } from './restaurants/entities/restaurant.entity';
 import { RestaurantsModule } from './restaurants/restaurants.module';
 
 @Module({
@@ -31,8 +32,9 @@ import { RestaurantsModule } from './restaurants/restaurants.module';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       // DB를 너의 ORM상태로 migration하는것.
-      synchronize: true,
-      logging: false,
+      synchronize: process.env.NODE_ENV !== 'prod',
+      logging: true,
+      entities: [Restaurant],
     }),
     RestaurantsModule,
   ],
