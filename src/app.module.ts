@@ -34,6 +34,7 @@ import { RestaurantsModule } from './restaurants/restaurants.module';
       // DB를 너의 ORM상태로 migration하는것.
       synchronize: process.env.NODE_ENV !== 'prod',
       logging: true,
+      // entities가 Restaurant의 DB다.
       entities: [Restaurant],
     }),
     RestaurantsModule,
