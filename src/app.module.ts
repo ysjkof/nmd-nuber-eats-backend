@@ -5,6 +5,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import * as Joi from 'joi';
 import { Restaurant } from './restaurants/entities/restaurant.entity';
 import { RestaurantsModule } from './restaurants/restaurants.module';
+import { UsersModule } from './users/users.module';
+import { CommonModule } from './common/common.module';
+import { User } from './users/entities/user.entity';
 
 @Module({
   imports: [
@@ -21,9 +24,6 @@ import { RestaurantsModule } from './restaurants/restaurants.module';
         DB_NAME: Joi.string().required(),
       }),
     }),
-    GraphQLModule.forRoot({
-      autoSchemaFile: true,
-    }),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST,
@@ -34,10 +34,15 @@ import { RestaurantsModule } from './restaurants/restaurants.module';
       // DB를 너의 ORM상태로 migration하는것.
       synchronize: process.env.NODE_ENV !== 'prod',
       logging: true,
-      // entities가 Restaurant의 DB다.
-      entities: [Restaurant],
+      // entities가 DB다.
+      entities: [Restaurant, User],
+    }),
+    GraphQLModule.forRoot({
+      autoSchemaFile: true,
     }),
     RestaurantsModule,
+    UsersModule,
+    CommonModule,
   ],
   controllers: [],
   providers: [],
