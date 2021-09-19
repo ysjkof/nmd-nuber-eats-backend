@@ -5,7 +5,9 @@ import {
   registerEnumType,
 } from '@nestjs/graphql';
 import { CoreEntity } from 'src/common/entities/core.entity';
-import { Column, Entity } from 'typeorm';
+import { BeforeInsert, Column, Entity } from 'typeorm';
+import * as bcrypt from 'bcrypt';
+import { InternalServerErrorException } from '@nestjs/common';
 
 enum UserRole {
   Client,
@@ -33,4 +35,16 @@ export class User extends CoreEntity {
   // GraphQL에 enum 연결
   @Field((type) => UserRole)
   role: UserRole;
+
+  // DB에 저장하기 전에 실행할 기능.
+  // user.service.ts에서 .save하기 전에 create를 한다. create는 오브젝트를 만든다. 그래서 이미 password를 가지고 있다.
+  @BeforeInsert()
+  async hashPassword(): Promise<void> {
+    try {
+      this.password = await bcrypt.hash(this.password, 10);
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException();
+    }
+  }
 }
