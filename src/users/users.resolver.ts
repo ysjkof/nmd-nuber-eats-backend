@@ -5,11 +5,11 @@ import {
 } from './dtos/create-account.dto';
 import { LoginInput, LoginOutput } from './dtos/login.dto';
 import { User } from './entities/user.entity';
-import { UsersService } from './users.service';
+import { UserService } from './users.service';
 
 @Resolver((of) => User)
 export class UsersResolver {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UserService) {}
 
   @Query((returns) => Boolean)
   hi() {
@@ -35,4 +35,7 @@ export class UsersResolver {
       return { ok: false, error };
     }
   }
+
+  @Query((returns) => User)
+  me() {}
 }
