@@ -47,6 +47,8 @@ import { JwtMiddleware } from './jwt/jwt.middleware';
     }),
     GraphQLModule.forRoot({
       autoSchemaFile: true,
+      // 컨텍스트는 req property를 포함한 객체를 express로부터 받는다. jwt모듈에서 설정한 걸 여기선 불러온다.
+      context: ({ req }) => ({ user: req['user'] }),
     }),
     RestaurantsModule,
     UsersModule,
@@ -63,6 +65,6 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(JwtMiddleware)
-      .forRoutes({ path: '/graphql', method: RequestMethod.ALL });
+      .forRoutes({ path: '/graphql', method: RequestMethod.POST });
   }
 }
