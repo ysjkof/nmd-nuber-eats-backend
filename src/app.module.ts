@@ -15,6 +15,7 @@ import { CommonModule } from './common/common.module';
 import { User } from './users/entities/user.entity';
 import { JwtModule } from './jwt/jwt.module';
 import { JwtMiddleware } from './jwt/jwt.middleware';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -50,12 +51,11 @@ import { JwtMiddleware } from './jwt/jwt.middleware';
       // 컨텍스트는 req property를 포함한 객체를 express로부터 받는다. jwt모듈에서 설정한 걸 여기선 불러온다.
       context: ({ req }) => ({ user: req['user'] }),
     }),
-    RestaurantsModule,
-    UsersModule,
-    CommonModule,
     JwtModule.forRoot({
       privateKey: process.env.PRIVATE_KEY,
     }),
+    RestaurantsModule,
+    UsersModule,
   ],
   controllers: [],
   providers: [],
