@@ -28,7 +28,7 @@ export class User extends CoreEntity {
   @IsEmail()
   email: string;
 
-  @Column()
+  @Column({ select: false })
   @Field((type) => String)
   password: string;
 
@@ -39,17 +39,23 @@ export class User extends CoreEntity {
   @IsEnum(UserRole)
   role: UserRole;
 
+  @Column({ default: false })
+  @Field((type) => Boolean)
+  verified: boolean;
+
   // DB에 저장하기 전에 실행할 기능.
   // user.service.ts에서 .save하기 전에 create를 한다. create는 오브젝트를 만든다. 그래서 이미 password를 가지고 있다.
   @BeforeInsert()
   // BeforeUpdate는 특정 entity를 update할때 실행된다. editProfile에서 update()는 엔티티를 거치지 않고 DB에 쿼리만 보내기 떄문에 안됨. 그래서 save()로 변경.
   @BeforeUpdate()
   async hashPassword(): Promise<void> {
-    try {
-      this.password = await bcrypt.hash(this.password, 10);
-    } catch (error) {
-      console.log(error);
-      throw new InternalServerErrorException();
+    if (this.password) {
+      try {
+        this.password = await bcrypt.hash(this.password, 10);
+      } catch (error) {
+        console.log(error);
+        throw new InternalServerErrorException();
+      }
     }
   }
 
