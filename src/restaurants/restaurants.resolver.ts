@@ -1,5 +1,7 @@
+import { SetMetadata } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { AuthUser } from 'src/auth/auth-user.decorator';
+import { Role } from 'src/auth/role.decorator';
 import { User } from 'src/users/entities/user.entity';
 import {
   CreateRestaurantInput,
@@ -15,6 +17,7 @@ export class RestaurantResolver {
 
   //   이하 ()=> Boolean은 필수다. GraphQL을 위함.
   @Mutation((returns) => CreateRestaurantOutput)
+  @Role(['Owner'])
   async createRestaurant(
     // 현재 로그인한 유저를 불러오는 기능.
     @AuthUser() authUser: User,

@@ -2,6 +2,7 @@ import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { AuthUser } from 'src/auth/auth-user.decorator';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { Role } from 'src/auth/role.decorator';
 import {
   CreateAccountInput,
   CreateAccountOutput,
@@ -31,12 +32,14 @@ export class UsersResolver {
 
   @Query((returns) => User)
   // @UseGuards(AuthGuard)만 추가하면 어떤 end point든 보호할 수 있다.
-  @UseGuards(AuthGuard)
+  // @UseGuards(AuthGuard)
+  @Role(['Any'])
   me(@AuthUser() authUser: User) {
     return authUser;
   }
 
-  @UseGuards(AuthGuard)
+  // @UseGuards(AuthGuard)
+  @Role(['Any'])
   @Query((returns) => UserProfileOutput)
   async userProfile(
     @Args() userProfileInput: UserProfileInput,
@@ -44,7 +47,8 @@ export class UsersResolver {
     return this.usersService.findById(userProfileInput.userId);
   }
 
-  @UseGuards(AuthGuard)
+  @Role(['Any'])
+  // @UseGuards(AuthGuard)
   @Mutation((returns) => EditProfileOutput)
   async editProfile(
     @AuthUser() authUser: User,
