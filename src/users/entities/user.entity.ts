@@ -8,7 +8,7 @@ import { CoreEntity } from 'src/common/entities/core.entity';
 import { BeforeInsert, BeforeUpdate, Column, Entity } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { InternalServerErrorException } from '@nestjs/common';
-import { IsEmail, IsEnum } from 'class-validator';
+import { IsBoolean, IsEmail, IsEnum, IsString } from 'class-validator';
 
 enum UserRole {
   Client,
@@ -30,6 +30,7 @@ export class User extends CoreEntity {
 
   @Column({ select: false })
   @Field((type) => String)
+  @IsString()
   password: string;
 
   // DB에 enum 연결
@@ -41,6 +42,7 @@ export class User extends CoreEntity {
 
   @Column({ default: false })
   @Field((type) => Boolean)
+  @IsBoolean()
   verified: boolean;
 
   // DB에 저장하기 전에 실행할 기능.
