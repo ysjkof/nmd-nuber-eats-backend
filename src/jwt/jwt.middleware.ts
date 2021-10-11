@@ -21,9 +21,11 @@ export class JwtMiddleware implements NestMiddleware {
       try {
         const decoded = this.jwtService.verify(token.toString());
         if (typeof decoded === 'object' && decoded.hasOwnProperty('id')) {
-          const user = await this.userService.findById(decoded['id']);
-          // 이하를 graphql resolver에 전달해줘야한다.
-          req['user'] = user;
+          const { user, ok } = await this.userService.findById(decoded['id']);
+          if (ok) {
+            // 이하를 graphql resolver에 전달해줘야한다.
+            req['user'] = user;
+          }
         }
       } catch (e) {}
     }

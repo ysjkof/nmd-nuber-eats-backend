@@ -35,7 +35,7 @@ export class UsersResolver {
   // @UseGuards(AuthGuard)
   @Role(['Any'])
   me(@AuthUser() authUser: User) {
-    console.log(authUser);
+    console.log('me QUERY :', authUser);
     return authUser;
   }
 
