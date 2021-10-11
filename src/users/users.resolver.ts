@@ -35,21 +35,22 @@ export class UsersResolver {
   // @UseGuards(AuthGuard)
   @Role(['Any'])
   me(@AuthUser() authUser: User) {
+    console.log(authUser);
     return authUser;
   }
 
   // @UseGuards(AuthGuard)
-  @Role(['Any'])
   @Query((returns) => UserProfileOutput)
+  @Role(['Any'])
   async userProfile(
     @Args() userProfileInput: UserProfileInput,
   ): Promise<UserProfileOutput> {
     return this.usersService.findById(userProfileInput.userId);
   }
 
-  @Role(['Any'])
   // @UseGuards(AuthGuard)
   @Mutation((returns) => EditProfileOutput)
+  @Role(['Any'])
   async editProfile(
     @AuthUser() authUser: User,
     @Args('input') editProfileInput: EditProfileInput,

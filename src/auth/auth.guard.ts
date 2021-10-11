@@ -14,6 +14,8 @@ export class AuthGuard implements CanActivate {
       'roles',
       context.getHandler(),
     );
+    // 메타데이터가 없으면 public이므로 true 리턴하고 끝. 메타데이터가 있다면 private이므로 user가 있기를 바라는 거다.
+    console.log('AuthGuard LOG :', roles);
     if (!roles) {
       return true;
     }
@@ -23,6 +25,10 @@ export class AuthGuard implements CanActivate {
     if (!user) {
       return false;
     }
+    if (roles.includes('Any')) {
+      return true;
+    }
+    // roles가 user.role과 동일한지 확인한다.
     return roles.includes(user.role);
   }
 }
