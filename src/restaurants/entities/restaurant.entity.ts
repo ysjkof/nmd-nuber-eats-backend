@@ -18,7 +18,7 @@ import { Dish } from './dish.entity';
 @ObjectType()
 @Entity()
 export class Restaurant extends CoreEntity {
-  @Field((type) => String)
+  @Field(type => String)
   @Column()
   @IsString()
   @Length(5)
@@ -33,26 +33,26 @@ export class Restaurant extends CoreEntity {
   // @IsBoolean()
   // isVegan: boolean;
 
-  @Field((type) => String)
+  @Field(type => String)
   @Column()
   @IsString()
   coverImg: string;
 
-  @Field((type) => String)
+  @Field(type => String)
   @Column()
   @IsString()
   address: string;
 
   // 카테고리를 지울 때 레스토랑을 지우면 안되기 때문에 눌러블:트루한다.
-  @Field((type) => Category, { nullable: true })
-  @ManyToOne((type) => Category, (category) => category.restaurants, {
+  @Field(type => Category, { nullable: true })
+  @ManyToOne(type => Category, category => category.restaurants, {
     nullable: true,
     onDelete: 'SET NULL',
   })
   category: Category;
 
-  @Field((type) => User)
-  @ManyToOne((type) => User, (user) => user.restaurants, {
+  @Field(type => User)
+  @ManyToOne(type => User, user => user.restaurants, {
     onDelete: 'CASCADE',
   })
   owner: User;
@@ -60,11 +60,11 @@ export class Restaurant extends CoreEntity {
   @RelationId((restaurant: Restaurant) => restaurant.owner)
   ownerId: number;
 
-  @Field((type) => [Order])
-  @OneToMany((type) => Order, (order) => order.restaurant)
+  @Field(type => [Order])
+  @OneToMany(type => Order, order => order.restaurant)
   orders: Order[];
 
-  @Field((type) => [Dish])
-  @OneToMany((type) => Dish, (dish) => dish.restaurant)
+  @Field(type => [Dish])
+  @OneToMany(type => Dish, dish => dish.restaurant)
   menu: Dish[];
 }

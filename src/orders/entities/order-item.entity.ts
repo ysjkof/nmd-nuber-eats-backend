@@ -7,10 +7,10 @@ import { Column, Entity, ManyToOne } from 'typeorm';
 @ObjectType()
 @Entity()
 export class OrderItemOption {
-  @Field((type) => String)
+  @Field(type => String)
   name: string;
 
-  @Field((type) => String, { nullable: true })
+  @Field(type => String, { nullable: true })
   choice: String;
 }
 
@@ -18,11 +18,11 @@ export class OrderItemOption {
 @ObjectType()
 @Entity()
 export class OrderItem extends CoreEntity {
-  @Field((type) => Dish)
-  @ManyToOne((type) => Dish, { nullable: true, onDelete: 'CASCADE' })
+  @Field(type => Dish)
+  @ManyToOne(type => Dish, { nullable: true, onDelete: 'CASCADE' })
   dish: Dish;
 
-  @Field((type) => [OrderItemOption], { nullable: true })
+  @Field(type => [OrderItemOption], { nullable: true })
   @Column({ type: 'json', nullable: true })
   options?: OrderItemOption[];
 }

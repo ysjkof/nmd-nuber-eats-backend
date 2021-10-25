@@ -9,11 +9,11 @@ import { GetOrdersInput, GetOrdersOutput } from './dtos/get-orders.dto';
 import { Order } from './entities/order.entity';
 import { OrderService } from './orders.service';
 
-@Resolver((of) => Order)
+@Resolver(of => Order)
 export class OrderResolver {
   constructor(private readonly ordersService: OrderService) {}
 
-  @Mutation((returns) => CreateOrderOutput)
+  @Mutation(returns => CreateOrderOutput)
   @Role(['Client'])
   async createOrder(
     @AuthUser() customer: User,
@@ -23,7 +23,7 @@ export class OrderResolver {
     return this.ordersService.createOrder(customer, createOrderInput);
   }
 
-  @Query((returns) => GetOrdersOutput)
+  @Query(returns => GetOrdersOutput)
   @Role(['Any'])
   async getOrders(
     @AuthUser() user: User,
@@ -32,7 +32,7 @@ export class OrderResolver {
     return this.ordersService.getOrders(user, getOrdersInput);
   }
 
-  @Query((returns) => GetOrderOutput)
+  @Query(returns => GetOrderOutput)
   @Role(['Any'])
   async getOrder(
     @AuthUser() user: User,
@@ -41,7 +41,7 @@ export class OrderResolver {
     return this.ordersService.getOrder(user, getOrderInput);
   }
 
-  @Mutation((returns) => EditOrderOutput)
+  @Mutation(returns => EditOrderOutput)
   @Role(['Any'])
   async editOrder(
     @AuthUser() user: User,

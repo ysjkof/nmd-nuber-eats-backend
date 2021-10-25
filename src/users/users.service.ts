@@ -52,6 +52,7 @@ export class UserService {
       // 이하 user는 findOne한 user다. user.enitity
       const user = await this.users.findOne(
         { email },
+        // user.untity에서 password select false했기 때문에 여기서 select해줘야 불러온다.
         { select: ['id', 'password'] },
       );
       if (!user) {

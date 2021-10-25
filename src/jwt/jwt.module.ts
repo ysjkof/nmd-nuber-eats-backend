@@ -8,10 +8,13 @@ import { JwtService } from './jwt.service';
 export class JwtModule {
   static forRoot(options: JwtModuleOptions): DynamicModule {
     return {
+      // 반환할 모듈의 이름
       module: JwtModule,
       providers: [
         {
+          // provide === provide의 이름
           provide: CONFIG_OPTIONS,
+          // 그 value가 options
           useValue: options,
         },
         JwtService,

@@ -50,14 +50,14 @@ export class OrderService {
         let dishFinalPrice = dish.price;
         for (const itemOption of item.options) {
           const dishOption = dish.options.find(
-            (dishOption) => dishOption.name === itemOption.name,
+            dishOption => dishOption.name === itemOption.name,
           );
           if (dishOption) {
             if (dishOption.extra) {
               dishFinalPrice = dishFinalPrice + dishOption.extra;
             } else {
               const dishOptionChoice = dishOption.choices.find(
-                (optionChoice) => optionChoice.name === itemOption.choice,
+                optionChoice => optionChoice.name === itemOption.choice,
               );
               if (dishOptionChoice) {
                 if (dishOptionChoice.extra) {
@@ -124,9 +124,9 @@ export class OrderService {
           relations: ['orders'],
         });
         // flat(1)은 Array내부의 Array를 바깥으로 뺀다. 1은 depth. [ [1], [2] ] => [1, 2]
-        orders = restaurants.map((restaurant) => restaurant.orders).flat(1);
+        orders = restaurants.map(restaurant => restaurant.orders).flat(1);
         if (status) {
-          orders = orders.filter((order) => order.status === status);
+          orders = orders.filter(order => order.status === status);
         }
       }
       return {

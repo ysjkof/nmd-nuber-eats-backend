@@ -21,42 +21,43 @@ export enum UserRole {
 // GraphQL에 enum 연결
 registerEnumType(UserRole, { name: 'UserRole' });
 
-@InputType('UserInputTypr', { isAbstract: true })
+@InputType('UserInputType', { isAbstract: true })
 @ObjectType()
 @Entity()
 export class User extends CoreEntity {
   @Column({ unique: true })
-  @Field((type) => String)
+  @Field(type => String)
   @IsEmail()
   email: string;
 
+  // verifyEmail할 때 패스워드 해시를 받아서 다시 해시 하게 된다. 그래서 password를 불러오지 않게({select:false}) 하고 hashPassword에서는 password가 있을때 작동하게 한다.
   @Column({ select: false })
-  @Field((type) => String)
+  @Field(type => String)
   @IsString()
   password: string;
 
   // DB에 enum 연결
   @Column({ type: 'enum', enum: UserRole })
   // GraphQL에 enum 연결
-  @Field((type) => UserRole)
+  @Field(type => UserRole)
   @IsEnum(UserRole)
   role: UserRole;
 
   @Column({ default: false })
-  @Field((type) => Boolean)
+  @Field(type => Boolean)
   @IsBoolean()
   verified: boolean;
 
-  @Field((type) => [Restaurant])
-  @OneToMany((type) => Restaurant, (restaurant) => restaurant.owner)
+  @Field(type => [Restaurant])
+  @OneToMany(type => Restaurant, restaurant => restaurant.owner)
   restaurants: Restaurant[];
 
-  @Field((type) => [Order])
-  @OneToMany((type) => Order, (order) => order.customer)
+  @Field(type => [Order])
+  @OneToMany(type => Order, order => order.customer)
   orders: Order[];
 
-  @Field((type) => [Order])
-  @OneToMany((type) => Order, (order) => order.driver)
+  @Field(type => [Order])
+  @OneToMany(type => Order, order => order.driver)
   rides: Order[];
 
   // DB에 저장하기 전에 실행할 기능.

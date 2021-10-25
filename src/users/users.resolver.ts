@@ -14,33 +14,32 @@ import { VerifyEmailInput, VerifyEmailOutput } from './dtos/verify-email.dto';
 import { User } from './entities/user.entity';
 import { UserService } from './users.service';
 
-@Resolver((of) => User)
+@Resolver(of => User)
 export class UsersResolver {
   constructor(private readonly usersService: UserService) {}
 
-  @Mutation((returns) => CreateAccountOutput)
+  @Mutation(returns => CreateAccountOutput)
   async createAccount(
     @Args('input') createAccountInput: CreateAccountInput,
   ): Promise<CreateAccountOutput> {
     return this.usersService.createAccount(createAccountInput);
   }
 
-  @Mutation((returns) => LoginOutput)
+  @Mutation(returns => LoginOutput)
   async login(@Args('input') loginInput: LoginInput): Promise<LoginOutput> {
     return this.usersService.login(loginInput);
   }
 
-  @Query((returns) => User)
+  @Query(returns => User)
   // @UseGuards(AuthGuard)만 추가하면 어떤 end point든 보호할 수 있다.
   // @UseGuards(AuthGuard)
   @Role(['Any'])
   me(@AuthUser() authUser: User) {
-    console.log('me QUERY :', authUser);
     return authUser;
   }
 
   // @UseGuards(AuthGuard)
-  @Query((returns) => UserProfileOutput)
+  @Query(returns => UserProfileOutput)
   @Role(['Any'])
   async userProfile(
     @Args() userProfileInput: UserProfileInput,
@@ -49,7 +48,7 @@ export class UsersResolver {
   }
 
   // @UseGuards(AuthGuard)
-  @Mutation((returns) => EditProfileOutput)
+  @Mutation(returns => EditProfileOutput)
   @Role(['Any'])
   async editProfile(
     @AuthUser() authUser: User,
@@ -58,7 +57,7 @@ export class UsersResolver {
     return this.usersService.editProfile(authUser.id, editProfileInput);
   }
 
-  @Mutation((returns) => VerifyEmailOutput)
+  @Mutation(returns => VerifyEmailOutput)
   verifyEmail(
     @Args('input') { code }: VerifyEmailInput,
   ): Promise<VerifyEmailOutput> {

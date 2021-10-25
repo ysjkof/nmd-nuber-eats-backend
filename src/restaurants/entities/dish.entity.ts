@@ -7,20 +7,20 @@ import { Restaurant } from './restaurant.entity';
 @InputType('DishChoiceInputType', { isAbstract: true })
 @ObjectType()
 export class DishChoice {
-  @Field((type) => String)
+  @Field(type => String)
   name: string;
-  @Field((type) => Int, { nullable: true })
+  @Field(type => Int, { nullable: true })
   extra?: number;
 }
 
 @InputType('DishOptionInputType', { isAbstract: true })
 @ObjectType()
 export class DishOption {
-  @Field((type) => String)
+  @Field(type => String)
   name: string;
-  @Field((type) => [DishChoice], { nullable: true })
+  @Field(type => [DishChoice], { nullable: true })
   choices?: DishChoice[];
-  @Field((type) => Int, { nullable: true })
+  @Field(type => Int, { nullable: true })
   extra?: number;
 }
 
@@ -28,31 +28,31 @@ export class DishOption {
 @ObjectType()
 @Entity()
 export class Dish extends CoreEntity {
-  @Field((type) => String)
+  @Field(type => String)
   @Column({ unique: true })
   @IsString()
   @Length(5)
   name: string;
 
-  @Field((type) => Int)
+  @Field(type => Int)
   @Column()
   @IsNumber()
   price: number;
 
-  @Field((type) => String, { nullable: true })
+  @Field(type => String, { nullable: true })
   @Column({ nullable: true })
   @IsString()
   photo: string;
 
-  @Field((type) => String)
+  @Field(type => String)
   @Column()
   @IsString()
   @Length(5, 140)
   description: string;
 
   // dish는 1개의 restaurant를 갖는다.
-  @Field((type) => Restaurant, { nullable: true })
-  @ManyToOne((type) => Restaurant, (restaurant) => restaurant.menu, {
+  @Field(type => Restaurant, { nullable: true })
+  @ManyToOne(type => Restaurant, restaurant => restaurant.menu, {
     // 레스토랑이 지워지면 디쉬도 지워짐.
     onDelete: 'CASCADE',
   })
@@ -61,7 +61,7 @@ export class Dish extends CoreEntity {
   @RelationId((dish: Dish) => dish.restaurant)
   restaurantId: number;
 
-  @Field((type) => [DishOption], { nullable: true })
+  @Field(type => [DishOption], { nullable: true })
   @Column({ type: 'json', nullable: true })
   options?: DishOption[];
 }

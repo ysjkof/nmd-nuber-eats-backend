@@ -38,13 +38,13 @@ import { Dish } from './entities/dish.entity';
 import { Restaurant } from './entities/restaurant.entity';
 import { RestaurantService } from './restaurants.service';
 
-@Resolver((of) => Restaurant)
+@Resolver(of => Restaurant)
 export class RestaurantResolver {
   // restaurants.module에 provider에 RestaurantService가 추가되야 여기서 사용가능. 그 뒤에 service에서 접근가능.
   constructor(private readonly restaurantService: RestaurantService) {}
 
   //   이하 ()=> Boolean은 필수다. GraphQL을 위함.
-  @Mutation((returns) => CreateRestaurantOutput)
+  @Mutation(returns => CreateRestaurantOutput)
   @Role(['Owner'])
   async createRestaurant(
     // 현재 로그인한 유저를 불러오는 기능.
@@ -58,7 +58,7 @@ export class RestaurantResolver {
     );
   }
 
-  @Mutation((returns) => EditRestaurantOutput)
+  @Mutation(returns => EditRestaurantOutput)
   @Role(['Owner'])
   editRestaurant(
     @AuthUser() owner: User,
@@ -67,7 +67,7 @@ export class RestaurantResolver {
     return this.restaurantService.editRestaurant(owner, editRestaurantInput);
   }
 
-  @Mutation((returns) => DeleteRestaurantOutput)
+  @Mutation(returns => DeleteRestaurantOutput)
   @Role(['Owner'])
   deleteRestaurant(
     @AuthUser() owner: User,
@@ -79,21 +79,21 @@ export class RestaurantResolver {
     );
   }
 
-  @Query((returns) => RestaurantsOutput)
+  @Query(returns => RestaurantsOutput)
   restaurants(
     @Args('input') restaurantsInput: RestaurantsInput,
   ): Promise<RestaurantsOutput> {
     return this.restaurantService.allRestaurants(restaurantsInput);
   }
 
-  @Query((returns) => RestaurantOutput)
+  @Query(returns => RestaurantOutput)
   restaurant(
     @Args('input') restaurantInput: RestaurantInput,
   ): Promise<RestaurantOutput> {
     return this.restaurantService.findRestaurantById(restaurantInput);
   }
 
-  @Query((returns) => SearchRestaurantOutput)
+  @Query(returns => SearchRestaurantOutput)
   searchRestaurant(
     @Args('input') searchRestaurantInput: SearchRestaurantInput,
   ): Promise<SearchRestaurantOutput> {
@@ -101,22 +101,22 @@ export class RestaurantResolver {
   }
 }
 
-@Resolver((of) => Category)
+@Resolver(of => Category)
 export class CategoryResolver {
   constructor(private readonly restaurantService: RestaurantService) {}
 
   // 매 request마다 계선된 field를 만든다.
-  @ResolveField((type) => Int)
+  @ResolveField(type => Int)
   restaurantCount(@Parent() category: Category): Promise<number> {
     return this.restaurantService.countRestaurants(category);
   }
 
-  @Query((type) => AllCategoriesOutput)
+  @Query(type => AllCategoriesOutput)
   allCategories(): Promise<AllCategoriesOutput> {
     return this.restaurantService.allCategories();
   }
 
-  @Query((type) => CategoryOutput)
+  @Query(type => CategoryOutput)
   category(
     @Args('input') categoryInput: CategoryInput,
   ): Promise<CategoryOutput> {
@@ -124,11 +124,11 @@ export class CategoryResolver {
   }
 }
 
-@Resolver((of) => Dish)
+@Resolver(of => Dish)
 export class DishResolver {
   constructor(private readonly restaurantService: RestaurantService) {}
 
-  @Mutation((type) => CreateDishOutput)
+  @Mutation(type => CreateDishOutput)
   @Role(['Owner'])
   createDish(
     @AuthUser() owner: User,
@@ -137,7 +137,7 @@ export class DishResolver {
     return this.restaurantService.createDish(owner, createDishInput);
   }
 
-  @Mutation((type) => EditDishOutput)
+  @Mutation(type => EditDishOutput)
   @Role(['Owner'])
   editDish(
     @AuthUser() owner: User,
@@ -146,7 +146,7 @@ export class DishResolver {
     return this.restaurantService.editDish(owner, editDishInput);
   }
 
-  @Mutation((type) => DeleteDishOutput)
+  @Mutation(type => DeleteDishOutput)
   @Role(['Owner'])
   deleteDish(
     @AuthUser() owner: User,
