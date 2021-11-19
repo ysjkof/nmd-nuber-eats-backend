@@ -52,6 +52,7 @@ export class OrderResolver {
     return this.ordersService.editOrder(user, editOrderInput);
   }
 
+  // 웹소켓에 요청 보냄.
   @Mutation(returns => Boolean)
   potatoReady() {
     pubsub.publish('hotPotatos', {
@@ -60,8 +61,11 @@ export class OrderResolver {
     return true;
   }
 
+  // 웹소켓 연결 시작. 리스닝 시작.
   @Subscription(returns => String)
-  readyPotato() {
+  @Role(['Any'])
+  readyPotato(@AuthUser() user: User) {
+    console.log('readyPotato:', user);
     return pubsub.asyncIterator('hotPotatos');
   }
 }

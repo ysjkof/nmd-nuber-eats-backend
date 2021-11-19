@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
+import { UsersModule } from 'src/users/users.module';
 import { AuthGuard } from './auth.guard';
 
 @Module({
+  imports: [UsersModule],
   providers: [
     {
       // guard를 앱 모든 곳에서 사용하고 싶다면 APP_GUARD를 사용한다. 모든 리솔버에서 가드가 실행됨.

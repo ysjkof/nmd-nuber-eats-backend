@@ -1,14 +1,20 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
+import { JwtService } from 'src/jwt/jwt.service';
 import { User } from 'src/users/entities/user.entity';
+import { UserService } from 'src/users/users.service';
 import { AllowedRoles } from './role.decorator';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(private readonly reflector: Reflector) {}
+  constructor(
+    private readonly reflector: Reflector,
+    private readonly jwtService: JwtService,
+    private readonly userService: UserService,
+  ) {}
   // canActivate: treu를 리턴하면 request를 진행하고 false면 request를 멈춘다.
-  canActivate(context: ExecutionContext) {
+  async canActivate(context: ExecutionContext) {
     // GraphQL에 메타데이터가 있으면 AuthGuard가 실행돼 유저를 확인한다.
     const roles = this.reflector.get<AllowedRoles>(
       'roles',
@@ -20,15 +26,27 @@ export class AuthGuard implements CanActivate {
       return true;
     }
     // context가 http context기 때문에 grqphql context로 바꿔준다.
+    // gqlContext는 app.module.ts에 GraphQLModule에 context를 뜻한다.
     const gqlContext = GqlExecutionContext.create(context).getContext();
-    const user: User = gqlContext['user'];
-    if (!user) {
+    const token = gqlContext.token;
+    if (token) {
+      const decoded = this.jwtService.verify(token.toString());
+      if (typeof decoded === 'object' && decoded.hasOwnProperty('id')) {
+        const { user } = await this.userService.findById(decoded['id']);
+        if (!user) {
+          return false;
+        }
+        gqlContext['user'] = user;
+        if (roles.includes('Any')) {
+          return true;
+        }
+        // roles가 user.role과 동일한지 확인한다.
+        return roles.includes(user.role);
+      } else {
+        return false;
+      }
+    } else {
       return false;
     }
-    if (roles.includes('Any')) {
-      return true;
-    }
-    // roles가 user.role과 동일한지 확인한다.
-    return roles.includes(user.role);
   }
 }
