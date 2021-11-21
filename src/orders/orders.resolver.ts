@@ -58,18 +58,28 @@ export class OrderResolver {
 
   // 웹소켓에 요청 보냄.
   @Mutation(returns => Boolean)
-  potatoReady() {
-    this.pubSub.publish('hotPotatos', {
-      readyPotato: 'Your potato is ready. love you.',
+  async potatoReady(@Args('potatoId') potatoId: number) {
+    await this.pubSub.publish('hotPotatos', {
+      readyPotato: potatoId,
     });
     return true;
   }
 
   // 웹소켓 연결 시작. 리스닝 시작.
-  @Subscription(returns => String)
+  // filter: (payload, variables, context) 필터는 update를 받을지 말지 결정한다.
+  // payload는 `Your potato id ${potatoId} is ready. love you.` 이거다.
+  // variables는  readyPotato(@Args('potatoId') potatoId: number) 이거다.
+  // context는 gqlContext다.
+  @Subscription(returns => String, {
+    filter: ({ readyPotato }, { potatoId }, context) => {
+      return readyPotato === potatoId;
+    },
+    // resolve는 output을 변형해준다.
+    resolve: ({ readyPotato }) =>
+      `Your potato with the id ${readyPotato} is ready!`,
+  })
   @Role(['Any'])
-  readyPotato(@AuthUser() user: User) {
-    console.log('readyPotato:', user);
+  readyPotato(@Args('potatoId') potatoId: number) {
     return this.pubSub.asyncIterator('hotPotatos');
   }
 }
