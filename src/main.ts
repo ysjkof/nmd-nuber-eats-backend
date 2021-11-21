@@ -9,6 +9,6 @@ async function bootstrap() {
   // middleware를 전체경로에서 사용하고 싶다면 이렇게.
   // 이때는 functional middleware만 가능. class 안됨.
   // app.use(jwtMiddleware);
-  await app.listen(4000);
+  await app.listen(3333);
 }
 bootstrap();
