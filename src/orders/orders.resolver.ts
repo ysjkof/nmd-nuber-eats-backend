@@ -3,7 +3,7 @@ import { Args, Mutation, Query, Resolver, Subscription } from '@nestjs/graphql';
 import { PubSub } from 'graphql-subscriptions';
 import { AuthUser } from 'src/auth/auth-user.decorator';
 import { Role } from 'src/auth/role.decorator';
-import { PUB_SUB } from 'src/common/common.constants';
+import { NEW_PENDING_ORDER, PUB_SUB } from 'src/common/common.constants';
 import { User } from 'src/users/entities/user.entity';
 import { CreateOrderInput, CreateOrderOutput } from './dtos/create-order.dto';
 import { EditOrderInput, EditOrderOutput } from './dtos/edit-order.dto';
@@ -56,30 +56,20 @@ export class OrderResolver {
     return this.ordersService.editOrder(user, editOrderInput);
   }
 
-  // 웹소켓에 요청 보냄.
-  @Mutation(returns => Boolean)
-  async potatoReady(@Args('potatoId') potatoId: number) {
-    await this.pubSub.publish('hotPotatos', {
-      readyPotato: potatoId,
-    });
-    return true;
-  }
-
   // 웹소켓 연결 시작. 리스닝 시작.
   // filter: (payload, variables, context) 필터는 update를 받을지 말지 결정한다.
-  // payload는 `Your potato id ${potatoId} is ready. love you.` 이거다.
-  // variables는  readyPotato(@Args('potatoId') potatoId: number) 이거다.
+  // payload는 readyPotato다.
   // context는 gqlContext다.
-  @Subscription(returns => String, {
-    filter: ({ readyPotato }, { potatoId }, context) => {
-      return readyPotato === potatoId;
+  @Subscription(returns => Order, {
+    filter: ({ pendingOrder: { ownerId } }, _, { user }) => {
+      return ownerId === user.id;
     },
+    // Subscription이 Order를 리턴한다고 했는데 createOrder에서 order와 ownerId를 객체로 리턴하고 있어서 에러가 난다.
     // resolve는 output을 변형해준다.
-    resolve: ({ readyPotato }) =>
-      `Your potato with the id ${readyPotato} is ready!`,
+    resolve: ({ pendingOrder: { order } }) => order,
   })
-  @Role(['Any'])
-  readyPotato(@Args('potatoId') potatoId: number) {
-    return this.pubSub.asyncIterator('hotPotatos');
+  @Role(['Owner'])
+  pendingOrders() {
+    return this.pubSub.asyncIterator(NEW_PENDING_ORDER);
   }
 }
