@@ -3,7 +3,7 @@ import { Cron, Interval, SchedulerRegistry, Timeout } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Restaurant } from 'src/restaurants/entities/restaurant.entity';
 import { User } from 'src/users/entities/user.entity';
-import { Repository } from 'typeorm';
+import { LessThan, Repository } from 'typeorm';
 import {
   CreatePaymentInput,
   CreatePaymentOutput,
@@ -46,6 +46,11 @@ export class PaymentService {
           restaurant,
         }),
       );
+      restaurant.isPromoted = true;
+      const date = new Date();
+      date.setDate(date.getDate() + 7);
+      restaurant.promotedUntil = date;
+      this.restaurants.save(restaurant);
       return {
         ok: true,
       };
@@ -69,25 +74,18 @@ export class PaymentService {
     }
   }
 
-  //   매 30초마다 실행
-  @Cron('30 * * * * *', {
-    name: 'myJob',
-  })
-  checkForPayments() {
-    console.log('Checking for payments....(cron)');
-    const job = this.schedulerRegistry.getCronJob('myJob');
-    job.stop();
-  }
-
-  //   5초 간격으로 실행
-  @Interval(5000)
-  checkForPaymentsI() {
-    console.log('Checking for payments....(interval)');
-  }
-
-  //   시작하고 20초 뒤에 한번만 실행
-  @Timeout(20000)
-  afterStarts() {
-    console.log('Congrats!');
+  // 레스토랑 db에서 isPromoted이 true고, promotedUntil이 오늘보다 적은 레스토랑을 찾는다. 찾은 레스토랑들의 isProfoted를 false로, promotedUntil을 null로 바꾸고 저장한다.
+  @Cron('5 * * * * *')
+  async checkPromotedRestaurants() {
+    const restaurants = await this.restaurants.find({
+      isPromoted: true,
+      promotedUntil: LessThan(new Date()),
+    });
+    console.log(restaurants);
+    restaurants.forEach(async restaurant => {
+      restaurant.isPromoted = false;
+      restaurant.promotedUntil = null;
+      await this.restaurants.save(restaurant);
+    });
   }
 }
