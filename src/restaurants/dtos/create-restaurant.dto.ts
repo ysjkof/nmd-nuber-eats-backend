@@ -2,6 +2,7 @@ import {
   ArgsType,
   Field,
   InputType,
+  Int,
   ObjectType,
   OmitType,
   PickType,
@@ -23,7 +24,10 @@ export class CreateRestaurantInput extends PickType(
 }
 
 @ObjectType()
-export class CreateRestaurantOutput extends CoreOutput {}
+export class CreateRestaurantOutput extends CoreOutput {
+  @Field(type => Int)
+  restaurantId?: number;
+}
 
 // `@Args`를 여러개 입력해야할 경우 이렇게 모아서 넣을 수 있다.
 // `@InputType`은 하나의 Obj다. arg로써 graphql에 전달한다.
